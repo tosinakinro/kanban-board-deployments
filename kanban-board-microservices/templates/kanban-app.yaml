@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanban-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanban-app
+  template:
+    metadata:
+      labels:
+        app: kanban-app
+    spec:
+      containers:
+      - name: kanban-app
+        image: oluwatoseen/kanban-board_kanban-app:v.0.0.1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://kanban-postgres:5432/kanban
+        - name: SPRING_DATASOURCE_USERNAME
+          value: kanban
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: kanban
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kanban-app
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30010
+  selector:
+    app: kanban-app
